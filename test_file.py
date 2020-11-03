@@ -36,7 +36,7 @@ def main():
     displacement = 0
     dx, dy = 0, 0
 
-    speed = 50
+    speed = 100  # For small displacements the dx, dy become greater than the displacement so the point 'jumps'
 
     while True:
         for event in pygame.event.get():
@@ -75,5 +75,3 @@ if __name__ == '__main__':
     pygame.init()
     root = pygame.display.set_mode((1500, 1400))
     main()
-
-
