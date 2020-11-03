@@ -6,39 +6,32 @@ from constants import *
 from math import sin, cos, atan2, sqrt
 
 
-class LetterBox:  # TODO ensure you can move letter boxes anywhere without deleting the screen
+class LetterBox:
     def __init__(self, x, y, image):
         self.x = x
         self.y = y
         self.image = image
-        self.displacement = 0
-        self.direction = 0
-        self.dx, self.dy = 0, 0
 
-    def move_to(self, surface, target_pos, speed=1):
-        if not self.displacement:
-            self.displacement = int(sqrt((target_pos[1] - self.y)**2 + (target_pos[0] - self.x)**2))
-            self.direction = atan2(target_pos[1] - self.y, target_pos[0] - self.x)
+    def move_to(self, surface, target_pos, speed):
+        displacement = int(sqrt((target_pos[1] - self.y)**2 + (target_pos[0] - self.x)**2))
+        direction = atan2(target_pos[1] - self.y, target_pos[0] - self.x)
 
-            self.dx = cos(self.direction) * speed
-            self.dy = sin(self.direction) * speed
+        dx = cos(direction) * speed
+        dy = sin(direction) * speed
 
-        if (self.displacement > 0) and (self.displacement < int(sqrt(self.dx**2 + self.dy**2))):
-            self.x, self.y = target_pos
-            self.displacement = 0
-        elif self.displacement > 0:
-            print(self.displacement)
-            self.x += self.dx
-            self.y += self.dy
-            self.displacement -= speed
-        else:
-            self.displacement = 0
-
-        x_new = int(self.x)
-        y_new = int(self.y)
-
-        surface.fill(BLACK)
-        surface.blit(self.image, (x_new, y_new))
+        while displacement > 0:
+            surface.fill(BLACK, rect=((self.x, self.y), (100, 100)))
+            if displacement < int(sqrt(dx**2 + dy**2)):
+                self.x, self.y = target_pos
+                displacement = 0
+            else:
+                self.x += dx
+                self.y += dy
+                displacement -= speed
+            x_new, y_new = int(self.x), int(self.y)
+            surface.blit(self.image, (x_new, y_new))
+            pygame.display.update()
+            clock.tick(FPS)
 
 
 def main():
@@ -47,23 +40,23 @@ def main():
     root = pygame.display.set_mode(WINDOW_SIZE)
 
     img = pygame.image.load('letters/A.png')
-    letter_a = LetterBox(600, 400, img)
+    letter_a = LetterBox(20, 20, img)
     root.blit(img, (letter_a.x, letter_a.y))
-
-    root.blit(img, (0,500))
 
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-
-        letter_a.move_to(root, (0, 0), 10)
-        root.blit(img, (0, 150))
-
+        if pygame.key.get_pressed()[K_a] == 1:
+            letter_a.move_to(root, (200, 150), 8)
+        elif pygame.key.get_pressed()[K_b] == 1:
+            letter_a.move_to(root, (20, 20), 8)
 
         pygame.display.update()
+        clock.tick(FPS)
 
 
 if __name__ == '__main__':
+    clock = pygame.time.Clock()
     main()
