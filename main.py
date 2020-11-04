@@ -54,6 +54,7 @@ class LetterBox:
 
 
 def main():
+    random_letter = random.choice(ALPHABET_LETTERS)
 
     while True:
         for event in pygame.event.get():
