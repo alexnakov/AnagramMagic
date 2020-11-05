@@ -1,7 +1,7 @@
 # Screen
 
 WINDOW_WIDTH = 1400
-WINDOW_HEIGHT = 900
+WINDOW_HEIGHT = 800
 WINDOW_SIZE = (WINDOW_WIDTH, WINDOW_HEIGHT)
 
 FPS = 60
@@ -28,6 +28,11 @@ UNPRESSED = (0, 0, 0)
 LEFT_PRESS = (1, 0, 0)
 RIGHT_PRESS = (0, 0, 1)
 MIDDLE_PRESS = (0, 1, 0)
+
+# Positions
+
+LETTERBOXS_POS = [(50, 600), (200, 600), (350, 600), (500, 600), (650, 600),
+               (800, 600), (950, 600), (1100, 600), (1250, 600)]
 
 
 

@@ -52,15 +52,24 @@ class LetterBox:
         elif pygame.mouse.get_pressed() != LEFT_PRESS:
             self.pressed = False
 
+    def display(self, surface):
+        surface.blit(self.image, (self.x, self.y))
+
 
 def main():
-    random_letter = random.choice(ALPHABET_LETTERS)
+
+    root.fill(WHITE)
+
+    letter_a = LetterBox(20, 20, pygame.image.load('letters/A.png'))
+    letter_a.display(root)
 
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+        letter_a.move_to(root, (500, 300), 5)
 
         pygame.display.update()
         clock.tick(FPS)
