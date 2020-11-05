@@ -4,6 +4,7 @@ import random
 from pygame.locals import *
 from constants import *
 from math import sin, cos, atan2, sqrt
+import time
 
 
 class AnswerBox:
@@ -17,12 +18,13 @@ class AnswerBox:
 
 
 class LetterBox:
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, image, letter):
         self.x = x
         self.y = y
         self.image = image
         self.rect = Rect((self.x, self.y), (100, 100))
         self.pressed = False
+        self.letter = letter
 
     def move_to(self, surface, target_pos, speed):
         """ Moves a letterbox to specific coords with a specified speed """
@@ -74,7 +76,7 @@ def main():
         random_letter = random.choice(ALPHABET_LETTERS)
         answer_boxes[i] = AnswerBox(ANSWERBOXS_POS[i][0], ANSWERBOXS_POS[i][1], i)
         letter_boxes[i] = LetterBox(LETTERBOXS_POS[i][0], LETTERBOXS_POS[i][1],
-                                    pygame.image.load(f'letters/{random_letter}.png'))
+                                    pygame.image.load(f'letters/{random_letter}.png'), random_letter)
 
     for i in answer_boxes:
         answer_boxes[i].display(root)
