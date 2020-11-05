@@ -6,6 +6,16 @@ from constants import *
 from math import sin, cos, atan2, sqrt
 
 
+class AnswerBox:
+    def __init__(self, x, y, order):
+        self.occupied = False
+        self.order = order
+        self.x, self.y = x, y
+
+    def display(self, surface):
+        surface.fill(RED, rect=(self.x, self.y, 100, 100))
+
+
 class LetterBox:
     def __init__(self, x, y, image):
         self.x = x
@@ -57,19 +67,24 @@ class LetterBox:
 
 
 def main():
+    answer_boxes = {}
+    letter_boxes = {}
 
-    root.fill(WHITE)
+    for i in range(9):
+        random_letter = random.choice(ALPHABET_LETTERS)
+        answer_boxes[i] = AnswerBox(ANSWERBOXS_POS[i][0], ANSWERBOXS_POS[i][1], i)
+        letter_boxes[i] = LetterBox(LETTERBOXS_POS[i][0], LETTERBOXS_POS[i][1],
+                                    pygame.image.load(f'letters/{random_letter}.png'))
 
-    letter_a = LetterBox(20, 20, pygame.image.load('letters/A.png'))
-    letter_a.display(root)
+    for i in answer_boxes:
+        answer_boxes[i].display(root)
+        letter_boxes[i].display(root)
 
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-
-        letter_a.move_to(root, (500, 300), 5)
 
         pygame.display.update()
         clock.tick(FPS)
