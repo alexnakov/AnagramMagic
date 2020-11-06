@@ -4,7 +4,6 @@ import random
 from pygame.locals import *
 from constants import *
 from math import sin, cos, atan2, sqrt
-import time
 
 
 class AnswerBox:
@@ -17,7 +16,7 @@ class AnswerBox:
         surface.fill(RED, rect=(self.x, self.y, 100, 100))
 
 
-class LetterBox:
+class Letter:
     def __init__(self, x, y, image, letter):
         self.x = x
         self.y = y
@@ -35,7 +34,8 @@ class LetterBox:
 
         while displacement > 0:
             surface.fill(BLACK, rect=((self.x, self.y), (100, 100)))
-            if displacement < int(sqrt(dx**2 + dy**2)):
+
+            if displacement <= int(sqrt(dx**2 + dy**2)) + speed:
                 self.x, self.y = target_pos
                 displacement = 0
             else:
@@ -60,7 +60,7 @@ class LetterBox:
             self.rect.y += mouse_dy
             self.x += mouse_dx
             self.y += mouse_dy
-            surface.blit(self.image, (self.x, self.y))
+            self.display(surface)
         elif pygame.mouse.get_pressed() != LEFT_PRESS:
             self.pressed = False
 
@@ -69,20 +69,9 @@ class LetterBox:
 
 
 def main():
-    answer_boxes = {}
-    letter_boxes = {}
-
-    for i in range(9):
-        random_letter = random.choice(ALPHABET_LETTERS)
-        answer_boxes[i] = AnswerBox(ANSWERBOXS_POS[i][0], ANSWERBOXS_POS[i][1], i)
-        letter_boxes[i] = LetterBox(LETTERBOXS_POS[i][0], LETTERBOXS_POS[i][1],
-                                    pygame.image.load(f'letters/{random_letter}.png'), random_letter)
-
-    for i in answer_boxes:
-        answer_boxes[i].display(root)
-        letter_boxes[i].display(root)
 
     while True:
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
