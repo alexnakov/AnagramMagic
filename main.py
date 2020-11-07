@@ -34,17 +34,16 @@ class Letter:
         self.char = char
         self.excited = False
 
-        self.rect = Rect((self.x, self.y), (100, 100))
-        self.pressed = False
-
     def excite(self, surface, speed):
+        # TODO fix the closing of the root when only some letters have been excited
+        # TODO fix the backgrounds when letters move
         """ Moves a Letter to the leftmost available AnswerBox and leaves a StoreBox """
+
         for answer_box in answer_boxes:
             if not answer_box.occupied:
                 answer_box.occupied = True
                 self.excited = True
                 target_x, target_y = answer_box.x, answer_box.y
-
                 displacement = sqrt((target_x - self.x) ** 2 + (target_y - self.y) ** 2)
                 direction = atan2(target_y - self.y, target_x - self.x)
                 dx = cos(direction) * speed
@@ -65,28 +64,6 @@ class Letter:
                     pygame.display.update()
                     clock.tick(FPS)
                 break
-
-    def move_to(self, surface, target_pos, speed):
-        """ Moves a letterbox to specific coords with a specified speed """
-        displacement = int(sqrt((target_pos[1] - self.y) ** 2 + (target_pos[0] - self.x) ** 2))
-        direction = atan2(target_pos[1] - self.y, target_pos[0] - self.x)
-        dx = cos(direction) * speed
-        dy = sin(direction) * speed
-
-        while displacement > 0:
-            check_termination()
-
-            if displacement <= int(sqrt(dx ** 2 + dy ** 2)) + speed:
-                self.x, self.y = target_pos
-                displacement = 0
-            else:
-                self.x += dx
-                self.y += dy
-                displacement -= speed
-            x_new, y_new = int(self.x), int(self.y)
-            surface.blit(self.image, (x_new, y_new))
-            pygame.display.update()
-            clock.tick(FPS)
 
     def display(self, surface):
         surface.blit(self.image, (self.x, self.y))
