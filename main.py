@@ -6,6 +6,16 @@ from constants import *
 from math import sin, cos, atan2, sqrt
 
 
+class StoreBox:
+    def __init__(self, x, y, order):
+        self.occupied = True
+        self.order = order,
+        self.x, self.y = x, y
+
+    def display(self, surface):
+        surface.fill(RED, rect=(self.x, self.y, 100, 100))
+
+
 class AnswerBox:
     def __init__(self, x, y, order):
         self.occupied = False
@@ -17,52 +27,43 @@ class AnswerBox:
 
 
 class Letter:
-    def __init__(self, x, y, image, letter):
+    def __init__(self, x, y, image, char):
         self.x = x
         self.y = y
         self.image = image
-        self.rect = Rect((self.x, self.y), (100, 100))
-        self.pressed = False
-        self.letter = letter
+        self.char = char
+        self.excited = False
 
-    def move_to(self, surface, target_pos, speed):
-        """ Moves a letterbox to specific coords with a specified speed """
-        displacement = int(sqrt((target_pos[1] - self.y)**2 + (target_pos[0] - self.x)**2))
-        direction = atan2(target_pos[1] - self.y, target_pos[0] - self.x)
-        dx = cos(direction) * speed
-        dy = sin(direction) * speed
+    def excite(self, surface, speed):
+        # TODO fix the closing of the root when only some letters have been excited
+        # TODO fix the backgrounds when letters move
+        """ Moves a Letter to the leftmost available AnswerBox and leaves a StoreBox """
 
-        while displacement > 0:
-            check_termination()
+        for answer_box in answer_boxes:
+            if not answer_box.occupied:
+                answer_box.occupied = True
+                self.excited = True
+                target_x, target_y = answer_box.x, answer_box.y
+                displacement = sqrt((target_x - self.x) ** 2 + (target_y - self.y) ** 2)
+                direction = atan2(target_y - self.y, target_x - self.x)
+                dx = cos(direction) * speed
+                dy = sin(direction) * speed
 
-            if displacement <= int(sqrt(dx**2 + dy**2)) + speed:
-                self.x, self.y = target_pos
-                displacement = 0
-            else:
-                self.x += dx
-                self.y += dy
-                displacement -= speed
-            x_new, y_new = int(self.x), int(self.y)
-            surface.blit(self.image, (x_new, y_new))
-            pygame.display.update()
-            clock.tick(FPS)
+                while displacement > 0:
+                    check_termination()
 
-    def drag(self, surface):
-        """ When called, it allows for the user to drag the letter with their mouse """
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        mouse_dx, mouse_dy = pygame.mouse.get_rel()
-
-        if pygame.mouse.get_pressed() == LEFT_PRESS and self.rect.collidepoint(mouse_x, mouse_y) and not self.pressed:
-            self.pressed = True
-        elif pygame.mouse.get_pressed() == LEFT_PRESS and self.pressed:
-            surface.fill(BLACK, rect=self.rect)
-            self.rect.x += mouse_dx
-            self.rect.y += mouse_dy
-            self.x += mouse_dx
-            self.y += mouse_dy
-            self.display(surface)
-        elif pygame.mouse.get_pressed() != LEFT_PRESS:
-            self.pressed = False
+                    if displacement <= int(sqrt(dx ** 2 + dy ** 2)) + speed:
+                        self.x, self.y = target_x, target_y
+                        displacement = 0
+                    else:
+                        self.x += dx
+                        self.y += dy
+                        displacement -= speed
+                    x_new, y_new = int(self.x), int(self.y)
+                    surface.blit(self.image, (x_new, y_new))
+                    pygame.display.update()
+                    clock.tick(FPS)
+                break
 
     def display(self, surface):
         surface.blit(self.image, (self.x, self.y))
@@ -75,18 +76,14 @@ def check_termination():
 
 
 def main():
-
-    letters = {}
-    answer_boxes = {}
-
     order = 0
     for position in LETTERBOXES_POSITIONS:
         letter = random.choice(ALPHABET_LETTERS)
-        letters[order] = Letter(position[0], position[1], pygame.image.load(f'letters/{letter}.png'), letter)
-        answer_boxes[order] = AnswerBox(position[0], position[1] - LETTER_BUFF, order)
+        letters.append(Letter(position[0], position[1], pygame.image.load(f'letters/{letter}.png'), letter))
+        answer_boxes.append(AnswerBox(position[0], position[1] - LETTER_BUFF, order))
         order += 1
     else:
-        del order
+        del order, letter
 
     for order in range(9):
         letters[order].display(root)
@@ -96,11 +93,13 @@ def main():
         key_pressed = pygame.key.get_pressed()
 
         for i in range(97, 123):
-            if key_pressed[i] == 1:
+            if key_pressed[i]:
                 pressed_letter = KEYS[i]
-                for letter in letters.values():
-                    if letter.letter == pressed_letter:
-                        letter.move_to(root, (50, 300), 10)
+                for letter in letters:
+                    if letter.char == pressed_letter and not letter.excited:
+                        letter.excite(root, 15)
+                        break
+                break
 
         check_termination()
         pygame.display.update()
@@ -109,6 +108,8 @@ def main():
 
 if __name__ == '__main__':
     pygame.init()
+    letters = []
+    answer_boxes = []
     root = pygame.display.set_mode(WINDOW_SIZE)
     clock = pygame.time.Clock()
     main()
