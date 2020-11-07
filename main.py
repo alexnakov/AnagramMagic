@@ -87,7 +87,6 @@ def main():
         answer_boxes[order].display(root)
 
     while True:
-
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -95,7 +94,7 @@ def main():
 
         pygame.display.update()
         clock.tick(FPS)
-
+ 
 
 if __name__ == '__main__':
     pygame.init()
