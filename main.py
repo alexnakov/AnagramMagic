@@ -86,8 +86,6 @@ def main():
         letters[order].display(root)
         answer_boxes[order].display(root)
 
-
-
     while True:
 
         for event in pygame.event.get():
