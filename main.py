@@ -70,6 +70,24 @@ class Letter:
 
 def main():
 
+    letters = {}
+    answer_boxes = {}
+
+    order = 0
+    for position in LETTERBOXES_POSITIONS:
+        letter = random.choice(ALPHABET_LETTERS)
+        letters[order] = Letter(position[0], position[1], pygame.image.load(f'letters/{letter}.png'), letter)
+        answer_boxes[order] = AnswerBox(position[0], position[1] - LETTER_ANSWERBOX_BUFF, order)
+        order += 1
+    else:
+        del order
+
+    for order in range(9):
+        letters[order].display(root)
+        answer_boxes[order].display(root)
+
+
+
     while True:
 
         for event in pygame.event.get():
