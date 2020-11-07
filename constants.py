@@ -34,7 +34,7 @@ MIDDLE_PRESS = (0, 1, 0)
 LETTERBOXES_POSITIONS = [(50, 600), (200, 600), (350, 600), (500, 600), (650, 600),
                          (800, 600), (950, 600), (1100, 600), (1250, 600)]
 
-LETTER_ANSWERBOX_BUFF = 300
+LETTER_BUFF = 300
 
 # Key of letters
 

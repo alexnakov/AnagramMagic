@@ -33,7 +33,7 @@ class Letter:
         dy = sin(direction) * speed
 
         while displacement > 0:
-            surface.fill(BLACK, rect=((self.x, self.y), (100, 100)))
+            check_termination()
 
             if displacement <= int(sqrt(dx**2 + dy**2)) + speed:
                 self.x, self.y = target_pos
@@ -68,6 +68,12 @@ class Letter:
         surface.blit(self.image, (self.x, self.y))
 
 
+def check_termination():
+    if pygame.event.get(eventtype=QUIT):
+        pygame.quit()
+        sys.exit()
+
+
 def main():
 
     letters = {}
@@ -77,7 +83,7 @@ def main():
     for position in LETTERBOXES_POSITIONS:
         letter = random.choice(ALPHABET_LETTERS)
         letters[order] = Letter(position[0], position[1], pygame.image.load(f'letters/{letter}.png'), letter)
-        answer_boxes[order] = AnswerBox(position[0], position[1] - LETTER_ANSWERBOX_BUFF, order)
+        answer_boxes[order] = AnswerBox(position[0], position[1] - LETTER_BUFF, order)
         order += 1
     else:
         del order
@@ -87,14 +93,19 @@ def main():
         answer_boxes[order].display(root)
 
     while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+        key_pressed = pygame.key.get_pressed()
 
+        for i in range(97, 123):
+            if key_pressed[i] == 1:
+                pressed_letter = KEYS[i]
+                for letter in letters.values():
+                    if letter.letter == pressed_letter:
+                        letter.move_to(root, (50, 300), 10)
+
+        check_termination()
         pygame.display.update()
         clock.tick(FPS)
- 
+
 
 if __name__ == '__main__':
     pygame.init()
