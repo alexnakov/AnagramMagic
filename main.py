@@ -27,6 +27,11 @@ class AnswerBox:
 
 
 class Letter:
+    initial_layout = pygame.Surface(WINDOW_SIZE)
+    for position in LETTERBOXES_POSITIONS:
+        initial_layout.fill(GREEN, rect=(position[0], position[1], 100, 100))
+        initial_layout.fill(RED, rect=(position[0], position[1] - LETTER_BUFF, 100, 100))
+
     def __init__(self, x, y, image, char):
         self.x = x
         self.y = y
@@ -35,9 +40,13 @@ class Letter:
         self.excited = False
 
     def excite(self, surface, speed):
-        # TODO fix the closing of the root when only some letters have been excited
-        # TODO fix the backgrounds when letters move
-        """ Moves a Letter to the leftmost available AnswerBox and leaves a StoreBox """
+        """ Moves a Letter to the leftmost available AnswerBox and leaves a StoreBox empty
+
+            NB: In order for the letters to move fast and smoothly,
+                a high FPS is needed (150) and 'speed' (25)
+
+            For Future: See if the moving effect is good enough and whether you need to convert speed
+                        into run_time or something like that """
 
         for answer_box in answer_boxes:
             if not answer_box.occupied:
@@ -60,9 +69,12 @@ class Letter:
                         self.y += dy
                         displacement -= speed
                     x_new, y_new = int(self.x), int(self.y)
+                    surface.blit(Letter.initial_layout, (0, 0))
+                    for letter in letters:
+                        surface.blit(letter.image, (letter.x, letter.y))
                     surface.blit(self.image, (x_new, y_new))
                     pygame.display.update()
-                    clock.tick(FPS)
+                    clock.tick(150)
                 break
 
     def display(self, surface):
@@ -97,7 +109,7 @@ def main():
                 pressed_letter = KEYS[i]
                 for letter in letters:
                     if letter.char == pressed_letter and not letter.excited:
-                        letter.excite(root, 15)
+                        letter.excite(root, 25)
                         break
                 break
 
